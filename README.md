@@ -1,2 +1,0 @@
-# DopePad
-Alternative Texteditor
