@@ -13,7 +13,7 @@ namespace DopePad
     public partial class Find : Form
     {
         int search = 0;
-        int start = 0;
+        int findPos = 0;
 
         string word = string.Empty;
 
@@ -26,14 +26,26 @@ namespace DopePad
         }
         //---------------------------------------------Code for communication between Forms!------------------------
 
+        private void btnFindNext_Click(object sender, EventArgs e)
+        {
+            word = txtFind.Text;
+
+            findPos = mainForm.rtbMainText.Find(word, findPos + 1, RichTextBoxFinds.None);
+            if (search != -1)
+            {
+                //mainForm.rtbMainText.Select(findPos, word.Length);
+               // findPos += findPos + word.Length;
+                mainForm.Focus();
+            }
+        }
+
         private void btnFind_Click(object sender, EventArgs e)
         {
             word = txtFind.Text;
 
-            search = mainForm.rtbMainText.Find(word, start, RichTextBoxFinds.None);
+            findPos = mainForm.rtbMainText.Find(word);
             if (search != -1)
             {
-                start += search + word.Length;
                 mainForm.Focus();
             }
         }

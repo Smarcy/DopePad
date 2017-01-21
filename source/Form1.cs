@@ -166,7 +166,14 @@ namespace DopePad
 
         private void Menu_Base64_Decrypt_Click(object sender, EventArgs e)
         {
-            rtbMainText.Text = base64.Base64Decrypt(rtbMainText.Text);
+            try
+            {
+                rtbMainText.Text = base64.Base64Decrypt(rtbMainText.Text);
+            }
+            catch
+            {
+                MessageBox.Show("Kein gültiger BASE64 String!");
+            }
         }
     }
 }
