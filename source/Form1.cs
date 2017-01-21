@@ -15,10 +15,10 @@ namespace DopePad
     public partial class Form1 : Form
     {
 
-        private bool isChanged = false;
+        private bool _isChanged = false;
         private string fileName = string.Empty;
 
-        public string textField
+        public string TextField
         {
             get { return rtbMainText.Text; }
             set { rtbMainText.Text = value; }
@@ -26,6 +26,7 @@ namespace DopePad
 
         FontDialog fontDialog = new FontDialog();
         Base64 base64 = new Base64();
+        DopeCrypt dopecrypt = new DopeCrypt();
 
 
         public Form1()
@@ -35,39 +36,40 @@ namespace DopePad
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (isChanged)
+            if (_isChanged)
             {
                 DialogResult tmpResult = MessageBox.Show("Document has changed, wanna save?", "Don't get lost!",
                                           MessageBoxButtons.YesNoCancel, MessageBoxIcon.Information);
 
                 if (tmpResult == DialogResult.Yes)
                 {
-                    isChanged = saveOrNew();
+                    _isChanged = saveOrNew();
                 }
                 else if (tmpResult == DialogResult.No)
                 {
                     rtbMainText.Text = string.Empty;
-                    isChanged = false;
+                    _isChanged = false;
                     this.Text = "DopePad - © by Smarc";
                 }
             } 
             else
             {
                 rtbMainText.Text = string.Empty;
-                isChanged = false;
+                _isChanged = false;
                 this.Text = "DopePad - © by Smarc";
             }
         }
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
+
             using (OpenFileDialog openFileDialog1 = new OpenFileDialog())
             {
                 openFileDialog1.Filter = "Text files (*.txt)|*.txt";
-                openFileDialog1.ShowDialog();
 
-                try
+                DialogResult dres = openFileDialog1.ShowDialog();
+
+                if (dres == DialogResult.OK)
                 {
                     using (StreamReader stream = new StreamReader(openFileDialog1.OpenFile()))
                     {
@@ -78,8 +80,9 @@ namespace DopePad
                     this.Text = "DopePad - © by Smarc - " + openFileDialog1.FileName;
                     fileName = openFileDialog1.FileName;
                 }
-                catch { }
-            }              
+                else
+                    return;
+            }
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -87,12 +90,15 @@ namespace DopePad
             using(SaveFileDialog saveDialog = new SaveFileDialog())
             {
                 saveDialog.Filter = "Text files (*.txt) | *.txt";
-                saveDialog.ShowDialog();
-                
-                try {
+                DialogResult dres = saveDialog.ShowDialog();
+
+                if (dres == DialogResult.OK)
+                {
                     rtbMainText.SaveFile(saveDialog.FileName, RichTextBoxStreamType.PlainText);
-                    isChanged = false;
-                    } catch { }
+                    _isChanged = false;
+                }
+                else
+                    return;
             }
             
         }
@@ -125,6 +131,7 @@ namespace DopePad
             if (this.Text != "DopePad - © by Smarc")
             {
                 rtbMainText.SaveFile(fileName, RichTextBoxStreamType.PlainText);
+                _isChanged = false;
             }
             else
                 saveOrNew();
@@ -132,7 +139,7 @@ namespace DopePad
 
         private void rtbMainText_TextChanged_1(object sender, EventArgs e)
         {
-            isChanged = true;
+            _isChanged = true;
         }
 
         private void rOT13ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -174,6 +181,21 @@ namespace DopePad
             {
                 MessageBox.Show("Kein gültiger BASE64 String!");
             }
+        }
+
+        private void encryptToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rtbMainText.Text = dopecrypt.Dope_encrypt(rtbMainText.Text);
+        }
+
+        private void decryptToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            rtbMainText.Text = dopecrypt.Dope_decrypt(rtbMainText.Text);
+        }
+
+        private void aboutDopePadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
